@@ -1,6 +1,7 @@
 ﻿using Bernhoeft.GRT.Teste.Application.Requests.Commands.v1;
 using Bernhoeft.GRT.Teste.Application.Requests.Queries.v1;
 using Bernhoeft.GRT.Teste.Application.Responses.Queries.v1;
+using FluentValidation.Results;
 
 namespace Bernhoeft.GRT.Teste.Api.Controllers.v1
 {
@@ -54,13 +55,22 @@ namespace Bernhoeft.GRT.Teste.Api.Controllers.v1
         /// <param name="cancellationToken"></param>
         /// <returns>Aviso.</returns>
         /// <response code="200">Sucesso.</response>
-        /// <response code="404">Aviso Não Encontrado.</response>    
+        /// <response code="404">Aviso Não Encontrado.</response>
+        /// <response code="400">Id inválido.</response>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAvisosResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAviso(int id, CancellationToken cancellationToken)
         {
-            var result = await Mediator.Send(new GetAvisoRequest { Id = id }, cancellationToken);
+            var request = new GetAvisoRequest { Id = id };
+            ValidationResult validationResult = new GetAvisoRequestValidator().Validate(request);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
+            var result = await Mediator.Send(request, cancellationToken);
             if (!result.IsSuccess)
                 return NotFound(result.Errors);
             return Ok(result.Data);
@@ -79,7 +89,12 @@ namespace Bernhoeft.GRT.Teste.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateAviso([FromBody] CreateAvisoRequest request, CancellationToken cancellationToken)
         {
-            Console.WriteLine("Entering CreateAviso method in AvisosController");
+            ValidationResult validationResult = new CreateAvisoValidator().Validate(request);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+            ;
             var result = await Mediator.Send(request, cancellationToken);
             if (!result.IsSuccess)
             {
@@ -105,6 +120,11 @@ namespace Bernhoeft.GRT.Teste.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateAviso(int id, [FromBody] UpdateAvisoRequest request, CancellationToken cancellationToken)
         {
+            ValidationResult validationResult = new UpdateAvisoValidator().Validate(request);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
             if (id != request.Id)
                 return BadRequest("ID não corresponde ao corpo da requisição.");
 
@@ -127,7 +147,14 @@ namespace Bernhoeft.GRT.Teste.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteAviso(int id, CancellationToken cancellationToken)
         {
-            var result = await Mediator.Send(new DeleteAvisoRequest { Id = id }, cancellationToken);
+            var request = new DeleteAvisoRequest { Id = id };
+            ValidationResult validationResult = new DeleteAvisoValidator().Validate(request);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
+            var result = await Mediator.Send(request, cancellationToken);
             if (!result.IsSuccess)
                 return NotFound(result.Errors);
             return NoContent();

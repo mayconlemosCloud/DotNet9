@@ -27,3 +27,11 @@ public class UpdateAvisoValidator : AbstractValidator<UpdateAvisoRequest>
         RuleFor(x => x.Mensagem).NotEmpty().WithMessage("Mensagem não pode ser vazia.");
     }
 }
+
+public class DeleteAvisoValidator : AbstractValidator<DeleteAvisoRequest>
+{
+    public DeleteAvisoValidator()
+    {
+        RuleFor(x => x.Id).GreaterThan(0).WithMessage("Id deve ser maior que zero.");
+    }
+}
