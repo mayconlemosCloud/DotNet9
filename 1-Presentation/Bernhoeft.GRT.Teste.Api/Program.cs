@@ -82,6 +82,14 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// Add logging
+builder.Services.AddLogging(config =>
+{
+    config.AddConsole();
+    config.AddDebug();
+
+});
+
 // Configurando o MediatR.
 builder.Services.AddMediatR(options => options.RegisterServicesFromAssemblyContaining<GetAvisosRequest>());
 

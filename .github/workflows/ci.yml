@@ -1,0 +1,41 @@
+name: .NET CI
+
+on:
+  push:
+    branches:
+      - master
+      - feature/**
+  pull_request:
+    branches:
+      - master
+      - feature/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Build
+      run: dotnet build 
+
+    - name: Run tests
+      run: dotnet test 
+
+  sucesso:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Verificar build
+      run: echo "Build e Testes terminaram com sucesso!"
+
+
+
