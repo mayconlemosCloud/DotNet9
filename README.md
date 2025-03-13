@@ -25,6 +25,30 @@ Para executar os testes, utilize o comando:
 dotnet test
 ```
 
+
+
+## Checklist de Implementação
+
+### 1. Implementação de Endpoints:
+- [x] **GET /avisos/{id}**: Retornar um aviso específico com base no ID.
+- [x] **POST /avisos**: Criar um novo aviso.
+- [x] **PUT /avisos/{id}**: Edita um aviso com base no ID.
+- [x] **DELETE /avisos/{id}**: Remove um aviso.
+
+### 2. Ajustes de Negócio:
+- [x] Adicionado controle de data de criação e edição nos avisos.
+
+### 3. Regras:
+- [x] Validação de ID na busca por um aviso específico.
+- [x] Validação de título e mensagem na criação de um aviso.
+- [x] Validação de mensagem na edição de um aviso.
+- [x] Implementação de soft delete.
+- [x] Ajuste nas buscas para trazer apenas avisos ativos.
+
+### Pontos Pendentes:
+- [ ] Testes unitários adicionais para os handlers de comandos e consultas.
+- [ ] Revisão de cobertura de testes para garantir que todas as funcionalidades estão devidamente testadas.
+
 ## Fluxo de Avisos
 
 ### 1. Criar Aviso
