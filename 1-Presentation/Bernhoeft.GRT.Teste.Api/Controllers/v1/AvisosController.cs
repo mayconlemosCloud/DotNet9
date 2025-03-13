@@ -2,6 +2,8 @@
 using Bernhoeft.GRT.Teste.Application.Requests.Queries.v1;
 using Bernhoeft.GRT.Teste.Application.Responses.Queries.v1;
 using FluentValidation.Results;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Bernhoeft.GRT.Teste.Api.Controllers.v1
 {
@@ -17,23 +19,12 @@ namespace Bernhoeft.GRT.Teste.Api.Controllers.v1
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = null)]
     public class AvisosController : RestApiController
     {
+        private readonly IMediator _mediator;
 
-        ///// <summary>
-        ///// Retorna um Aviso por ID.
-        ///// </summary>
-        ///// <param name="request"></param>
-        ///// <param name="cancellationToken"></param>
-        ///// <returns>Aviso.</returns>
-        ///// <response code="200">Sucesso.</response>
-        ///// <response code="400">Dados Inválidos.</response>
-        ///// <response code="404">Aviso Não Encontrado.</response>
-        //[HttpGet("{id}")]
-        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAvisoResponse))]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[JwtAuthorize(Roles = AuthorizationRoles.CONTRACTLAYOUT_SISTEMA_AVISO_PESQUISAR)]
-        //public async Task<object> GetAviso([FromModel] GetAvisoRequest request, CancellationToken cancellationToken)
-        //    => await Mediator.Send(request, cancellationToken);
+        public AvisosController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
 
         /// <summary>
         /// Retorna Todos os Avisos Cadastrados para Tela de Edição.
@@ -46,7 +37,7 @@ namespace Bernhoeft.GRT.Teste.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDocumentationRestResult<IEnumerable<GetAvisosResponse>>))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<object> GetAvisos(CancellationToken cancellationToken)
-            => await Mediator.Send(new GetAvisosRequest(), cancellationToken);
+            => await _mediator.Send(new GetAvisosRequest(), cancellationToken);
 
         /// <summary>
         /// Retorna um Aviso por ID.
@@ -70,7 +61,7 @@ namespace Bernhoeft.GRT.Teste.Api.Controllers.v1
                 return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            var result = await Mediator.Send(request, cancellationToken);
+            var result = await _mediator.Send(request, cancellationToken);
             if (!result.IsSuccess)
                 return NotFound(result.Errors);
             return Ok(result.Data);
@@ -95,7 +86,7 @@ namespace Bernhoeft.GRT.Teste.Api.Controllers.v1
                 return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
             }
             ;
-            var result = await Mediator.Send(request, cancellationToken);
+            var result = await _mediator.Send(request, cancellationToken);
             if (!result.IsSuccess)
             {
                 Console.WriteLine("CreateAviso method in AvisosController: BadRequest");
@@ -128,7 +119,7 @@ namespace Bernhoeft.GRT.Teste.Api.Controllers.v1
             if (id != request.Id)
                 return BadRequest("ID não corresponde ao corpo da requisição.");
 
-            var result = await Mediator.Send(request, cancellationToken);
+            var result = await _mediator.Send(request, cancellationToken);
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
             return Ok(result.Data);
@@ -154,7 +145,7 @@ namespace Bernhoeft.GRT.Teste.Api.Controllers.v1
                 return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            var result = await Mediator.Send(request, cancellationToken);
+            var result = await _mediator.Send(request, cancellationToken);
             if (!result.IsSuccess)
                 return NotFound(result.Errors);
             return NoContent();
