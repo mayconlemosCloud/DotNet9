@@ -29,4 +29,13 @@ jobs:
     - name: Run tests
       run: dotnet test 
 
-  
+  sucesso:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Verificar build
+      run: echo "Build e Testes terminaram com sucesso!"
+
+
+
