@@ -27,6 +27,6 @@ jobs:
       run: dotnet build 
 
     - name: Run tests
-      run: dotnet test  --verbosity 
+      run: dotnet test 
 
   
